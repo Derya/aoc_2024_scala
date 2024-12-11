@@ -1,5 +1,18 @@
 import scala.collection.immutable.ArraySeq
 
+class Cacher[A, B] {
+  import scala.collection.mutable
+
+  private val cache: mutable.Map[A, B] = mutable.Map.empty
+
+  def getOrElseUpdate(key: A, f: => B): B =
+    cache.getOrElseUpdate(key, f)
+}
+
+object Cacher {
+  def apply[A, B] = new Cacher[A, B]()
+}
+
 implicit class Crossable[A](x: Iterable[A]) {
   def cross[B](other: Iterable[B]): Iterable[(A, B)] = x.flatMap(a => other.map(b => (a, b)))
 }
@@ -43,7 +56,7 @@ object Matrix2D {
 
   import scala.collection.generic.IsIterableOnce
   import scala.collection.Factory
-  
+
   def from[C, CC](data: C)(using
     outerIsIterableOnce: IsIterableOnce[C] {type A = CC},
     innerIsIterableOnce: IsIterableOnce[CC],
