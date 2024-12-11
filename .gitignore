@@ -1,4 +1,6 @@
 input.sc
+aoc_session
+cache/
 .idea
 .bsp
 .scala-build
