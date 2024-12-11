@@ -1,4 +1,5 @@
 //> using file input.scala
+//> using file ../common/util.scala
 
 def getAnswer1 = {
   buildList1().sorted.zip(buildList2().sorted).foldLeft(0L) {

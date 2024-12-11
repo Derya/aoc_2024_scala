@@ -1,4 +1,5 @@
 //> using file input.scala
+//> using file ../common/util.scala
 
 val reports: Vector[Vector[Int]] = buildInput().map(report => report.split(" ").map(_.toInt).toVector)
 

@@ -1,4 +1,5 @@
 //> using file input.scala
+//> using file ../common/util.scala
 
 import scala.util.matching.Regex
 
