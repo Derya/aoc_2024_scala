@@ -1,6 +1,6 @@
-import input.input
+//> using file input.scala
 
-val reports: Vector[Vector[Int]] = input.map(report => report.split(" ").map(_.toInt).toVector)
+val reports: Vector[Vector[Int]] = buildInput().map(report => report.split(" ").map(_.toInt).toVector)
 
 def reportIsSafe(report: Vector[Int]): Boolean = {
 
@@ -30,12 +30,14 @@ def getAnswer1 = {
   reports.count(r => reportIsSafe(r))
 }
 
-println(getAnswer1)
-
 def getAnswer2 = {
   reports.count(report => {
     report.indices.exists(index => reportIsSafe(report.patch(index, Nil, 1)))
   })
 }
 
-println(getAnswer2)
+@main
+def main(): Unit = {
+  println(getAnswer1)
+  println(getAnswer2)
+}

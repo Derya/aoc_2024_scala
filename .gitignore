@@ -1,6 +1,8 @@
-input.sc
+input.scala
+input
 aoc_session
 cache/
 .idea
+*.semanticdb
 .bsp
 .scala-build

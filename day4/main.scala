@@ -1,7 +1,8 @@
-import input.input
+//> using file input.scala
+
 import scala.util.matching.Regex
 
-val grid: Array[Array[Char]] = input.split("\n").map(_.toCharArray)
+val grid: Array[Array[Char]] = buildInput().split("\n").map(_.toCharArray)
 
 val pattern1: Regex = "XMAS".r
 val pattern2: Regex = "SAMX".r
@@ -55,8 +56,6 @@ def getAnswer1 = {
   normalMatches() + diagMatches()
 }
 
-println(getAnswer1)
-
 def getAnswer2 = {
   def coordOrQ(x: Int, y: Int): Char = {
     if (x >= 0 && x < grid.length && y >= 0 && y < grid(x).length) {
@@ -89,4 +88,8 @@ def getAnswer2 = {
   ret
 }
 
-println(getAnswer2)
+@main
+def main(): Unit = {
+  println(getAnswer1)
+  println(getAnswer2)
+}
