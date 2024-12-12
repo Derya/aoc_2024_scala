@@ -1,5 +1,9 @@
 import scala.collection.immutable.ArraySeq
 
+implicit class SeqOps[A](x: Seq[A]) {
+  def zippedWithPriorElements: Seq[(A, Seq[A])] = x.zip(x.inits.toSeq.reverse)
+}
+
 class Cacher[A, B] {
   import scala.collection.mutable
 

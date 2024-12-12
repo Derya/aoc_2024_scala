@@ -13,15 +13,9 @@ val stuffThatComesBeforeMe: Map[Int, Set[Int]] =
     acc + (rule.after -> (acc.getOrElse(rule.after, Set.empty) + rule.before))
   )
 
-import scala.util.matching.Regex
-
 def reportObeysRules(update: List[Int]): Boolean = {
-
-  val pairedWithPriorElements1: List[(Int, List[Int])] = update.zip(update.inits.reverse) // TODO - utils!
-  val pairedWithPriorElements2: List[(Int, List[Int])] = update.zip(update.scanLeft(List[Int]())((b, a) => a :: b).map(_.reverse))
-
   val anyRuleBroken = update
-    .zip(update.inits.reverse)
+    .zippedWithPriorElements
     .exists((page, previousPages) =>
       previousPages.exists(previousPage => stuffThatComesAfterMe(page).contains(previousPage))
     )

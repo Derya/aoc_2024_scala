@@ -1,10 +1,11 @@
 //> using file ../common/util.scala
 //> using file ../common/inputs.scala
 
-def parseInput(): List[BigInt] = loadInputWeb(2024, 11)
-  .split(" ")
-  .map(BigInt(_))
-  .toList
+def parseInput(): List[BigInt] =
+  loadInputWeb(2024, 11)
+    .split(" ")
+    .map(BigInt(_))
+    .toList
 
 def getAnswer1 = {
   def iter(stones: List[BigInt]): List[BigInt] =
@@ -24,24 +25,20 @@ def getAnswer1 = {
       }
     })
 
-  val idk = Matrix2D.from(List(List(1, 2), List(3, 4)))
-
-  var stones = parseInput()
-  1 to 25 foreach { i =>
-    stones = iter(stones)
-  }
-  stones.length
+  (1 to 25)
+    .foldLeft(parseInput())((currentStones, blink) => iter(currentStones))
+    .length
 }
 
 
 def getAnswer2 = {
-  val cache = Cacher[(BigInt, Int), BigInt]
+  val countCache = Cacher[(BigInt, Int), BigInt]
 
   def count(stone: BigInt, blinksRemaining: Int): BigInt = {
     if (blinksRemaining == 0) {
       1
     } else {
-      cache.getOrElseUpdate(
+      countCache.getOrElseUpdate(
         (stone, blinksRemaining),
         if (stone == 0) {
           count(1, blinksRemaining - 1)
