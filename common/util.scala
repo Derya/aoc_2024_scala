@@ -19,14 +19,35 @@ object Cacher {
 
 implicit class Crossable[A](x: Iterable[A]) {
   def cross[B](other: Iterable[B]): Iterable[(A, B)] = x.flatMap(a => other.map(b => (a, b)))
+object Direction {
+  def fromChar(c: Char): Option[Direction] = 
+    c match {
+      case '<' => Some(West)
+      case '>' => Some(East)
+      case '^' => Some(North)
+      case 'v' => Some(South)
+      case _ => None
+    }
 }
 
+/**
+  * Higher x values means further down from the top.
+  * Higher y values means further right from the left.
+  * So x controls row, y controls column.
+  */
 class Matrix2D[A](matrix: ArraySeq[ArraySeq[A]]) {
   def map[B](f: A => B): Matrix2D[B] =
     Matrix2D(matrix.map(_.map(f)))
 
+  def findAny(f: A => Boolean): Option[Coord] =
+    indices.find(coord => f(matrix(coord.x)(coord.y)))
+
   def updated(coord: Coord, value: A): Matrix2D[A] =
     Matrix2D(matrix.updated(coord.x, matrix(coord.x).updated(coord.y, value)))
+
+//  def widthAt(x: Int): Option[Int] = ???
+
+//  def heightAt(y: Int): Option[Int] = ???
 
   def coordAt(coord: Coord): Option[A] =
     if (coord.x < 0 || coord.x >= matrix.length || coord.y < 0 || coord.y >= matrix(coord.x).length) {
@@ -45,6 +66,9 @@ class Matrix2D[A](matrix: ArraySeq[ArraySeq[A]]) {
       .indices
       .flatMap(x => matrix(x).indices.map(y => Coord(x, y)))
       .map(coord => (coord, matrix(coord.x)(coord.y)))
+
+  lazy val prettyPrint: String = 
+    matrix.map(_.mkString).mkString("\n")
 }
 
 object Matrix2D {
@@ -74,12 +98,35 @@ object Matrix2D {
   }
 }
 
+/**
+  * Higher x values means further down from the top.
+  * Higher y values means further right from the left.
+  * So x controls row, y controls column.
+  */
 case class Coord(x: Int, y: Int) {
+  def isDirectionOf(direction: Direction, other: Coord): Boolean =
+    direction match {
+      case Direction.North => x < other.x
+      case Direction.South => other.x < x
+      case Direction.West => y < other.y
+      case Direction.East => other.y < y
+    }
+
+  def moveDirection(direction: Direction): Coord =
+    direction match {
+      case Direction.North => Coord(x - 1, y)
+      case Direction.South => Coord(x + 1, y)
+      case Direction.West => Coord(x, y - 1)
+      case Direction.East => Coord(x, y + 1)
+    }
+
   def +(other: Coord): Coord = Coord(x + other.x, y + other.y)
 
   def -(other: Coord): Coord = Coord(x - other.x, y - other.y)
 
   def *(scalar: Int): Coord = Coord(x * scalar, y * scalar)
+
+  def /(scalar: Int): Coord = Coord(x / scalar, y / scalar)
 
   def shrinkRetainSlope(): Coord = {
     val gcd = BigInt(x).gcd(BigInt(y)).toInt
@@ -100,7 +147,8 @@ case class Coord(x: Int, y: Int) {
     Coord(x - 1, y + 1)
   )
 
-  lazy val adjacentsAndDiagonals = adjacents ++ diagonals
+  lazy val adjacentsAndDiagonals: List[Coord] =
+    adjacents ++ diagonals
 }
 
 //implicit class IterableOnceOps[A](x: IterableOnce[A]) {

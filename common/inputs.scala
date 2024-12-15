@@ -31,3 +31,21 @@ def loadInputWeb(
     responseBody
   }
 }
+
+def loadInputAsMatrix(
+  year: Int,
+  day: Int
+): Matrix2D[Char] =
+  Matrix2D.fromString(loadInputWeb(year, day))
+
+def loadInputAs2Parter(
+  year: Int,
+  day: Int
+): (String, String) = {
+  val input = loadInputWeb(year, day)
+  val parts = input.split("\n\n")
+  
+  if (parts.length != 2) sys.error("error, parsed " + parts.length + " parts")
+    
+  (parts(0), parts(1))
+}
