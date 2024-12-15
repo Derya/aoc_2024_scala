@@ -4,21 +4,18 @@ implicit class SeqOps[A](x: Seq[A]) {
   def zippedWithPriorElements: Seq[(A, Seq[A])] = x.zip(x.inits.toSeq.reverse)
 }
 
-class Cacher[A, B] {
-  import scala.collection.mutable
+type Cacher[A, B] = scala.collection.mutable.Map[A, B]
 
-  private val cache: mutable.Map[A, B] = mutable.Map.empty
-
-  def getOrElseUpdate(key: A, f: => B): B =
-    cache.getOrElseUpdate(key, f)
-}
-
-object Cacher {
-  def apply[A, B] = new Cacher[A, B]()
-}
+def Cacher[A, B]: Cacher[A, B] = scala.collection.mutable.Map.empty[A, B]
 
 implicit class Crossable[A](x: Iterable[A]) {
   def cross[B](other: Iterable[B]): Iterable[(A, B)] = x.flatMap(a => other.map(b => (a, b)))
+}
+
+enum Direction {
+  case North, East, South, West
+}
+
 object Direction {
   def fromChar(c: Char): Option[Direction] = 
     c match {
@@ -150,15 +147,6 @@ case class Coord(x: Int, y: Int) {
   lazy val adjacentsAndDiagonals: List[Coord] =
     adjacents ++ diagonals
 }
-
-//implicit class IterableOnceOps[A](x: IterableOnce[A]) {
-//  def sumBig[B >: A](implicit num: Numeric[B]): B =
-//    if (isEmpty) {
-//      num.zero
-//    } else {
-//      x.iterator.foldLeft(BigInt(0))((a, b) => a + num.toBigInt(b))
-//    }
-//}
 
 implicit class ArrayOps[A](x: Array[A]) {
   def findWithIdx(p: A => Boolean): Option[(A, Int)] = {
