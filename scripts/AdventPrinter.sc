@@ -70,7 +70,7 @@ def getAdventTime(adventCalendarDay: Int, year: Int): Long = {
 }
 
 def getBoardData(
-  board: Board,
+  boardId: Long,
   year: Int
 ): AocApi.ApiResp = {
   import sttp.client4.Response
@@ -82,9 +82,9 @@ def getBoardData(
   import io.circe.parser.*
   import io.circe.syntax.*
 
-  val SESSION_PATH = os.pwd / "aoc_session"
-  val CACHED_JSON_PATH = os.pwd / "cache" / s"aoc_saved_json_${board.id}"
-  val CACHED_JSON_DATE_PATH = os.pwd / "cache" / s"aoc_saved_json_date_${board.id}"
+  val SESSION_PATH = os.pwd / os.up / "aoc_session"
+  val CACHED_JSON_PATH = os.pwd / os.up / "cache" / s"${year}_aoc_saved_json_${boardId}"
+  val CACHED_JSON_DATE_PATH = os.pwd / os.up / "cache" / s"${year}_aoc_saved_json_date_${boardId}"
 
   // don't hit API more than once per 15 minutes
   val useCached = os.exists(CACHED_JSON_DATE_PATH) &&
@@ -96,7 +96,7 @@ def getBoardData(
   } else {
     println("Fetching fresh JSON...")
     val responseBody = quickRequest
-      .get(uri"https://adventofcode.com/$year/leaderboard/private/view/${board.id}.json")
+      .get(uri"https://adventofcode.com/$year/leaderboard/private/view/${boardId}.json")
       .header("cookie", "session=%s".format(os.read(SESSION_PATH).trim))
       .send()
       .body
@@ -119,16 +119,16 @@ def getBoardData(
 }
 
 def buildBoardLog(
-  board: Board,
-  year: Int,
-  usersPerDay: Int,
-  daysToShow: Int,
-  hoursCutoff: Option[Int] = None
+  boardId: Long,
+  daysToShow: Int = 5,
+  usersPerDay: Int = 5,
+  hoursCutoff: Option[Int] = None,
+  year: Int = 2024,
 ): List[String] = {
   import AocApi._
 
   val allMembers: List[Member] =
-    getBoardData(board, year)
+    getBoardData(boardId, year)
       .members
       .map((_, member) => member).toList
 
@@ -184,12 +184,21 @@ def buildBoardLog(
     })
 }
 
-buildBoardLog(
-  board = Board.scala,
-  year = 2024,
-  usersPerDay = 5,
-  daysToShow = 5,
-  hoursCutoff = None
-).foreach(println)
+def printBoard(
+  boardId: Long,
+  daysToShow: Int = 5,
+  usersPerDay: Int = 5,
+  hoursCutoff: Option[Int] = None,
+  year: Int = 2024
+) = {
+  buildBoardLog(boardId, daysToShow, usersPerDay, hoursCutoff, year).foreach(println)
+  println()
+}
 
-println()
+//printBoard(
+//  board = Board.scala,
+//  daysToShow = 5,
+//  usersPerDay = 5,
+//  hoursCutoff = None,
+//  year = 2024,
+//)
