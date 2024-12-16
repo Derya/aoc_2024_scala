@@ -12,11 +12,29 @@ implicit class Crossable[A](x: Iterable[A]) {
   def cross[B](other: Iterable[B]): Iterable[(A, B)] = x.flatMap(a => other.map(b => (a, b)))
 }
 
-enum Direction {
-  case North, East, South, West
+sealed trait Direction {
+  def cw: Direction
+  def ccw: Direction
 }
 
 object Direction {
+  case object North extends Direction {
+    def cw = East
+    def ccw = West
+  }
+  case object East extends Direction {
+    def cw = South
+    def ccw = North
+  }
+  case object South extends Direction {
+    def cw = West
+    def ccw = East
+  }
+  case object West extends Direction {
+    def cw = North
+    def ccw = South
+  }
+
   def fromChar(c: Char): Option[Direction] = 
     c match {
       case '<' => Some(West)

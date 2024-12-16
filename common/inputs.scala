@@ -8,8 +8,9 @@ def loadInputWeb(
 
   val dayProblemFolderName: String = s"day$day"
 
-  if (!os.exists(os.pwd / dayProblemFolderName))
+  if (!os.exists(os.pwd / dayProblemFolderName)) {
     sys.error(s"The folder for this day, $dayProblemFolderName, does not exist!")
+  }
 
   val SESSION_PATH = os.pwd / "aoc_session"
   val SAVED_INPUT_PATH = os.pwd / dayProblemFolderName / "input"
@@ -45,7 +46,9 @@ def loadInputAs2Parter(
   val input = loadInputWeb(year, day)
   val parts = input.split("\n\n")
   
-  if (parts.length != 2) sys.error("error, parsed " + parts.length + " parts")
+  if (parts.length != 2) {
+    sys.error("error, parsed " + parts.length + " parts")
+  }
     
   (parts(0), parts(1))
 }
